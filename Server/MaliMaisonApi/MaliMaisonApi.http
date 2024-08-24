@@ -1,0 +1,6 @@
+@MaliMaisonApi_HostAddress = http://localhost:5043
+
+GET {{MaliMaisonApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

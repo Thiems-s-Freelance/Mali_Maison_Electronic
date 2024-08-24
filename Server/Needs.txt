@@ -1,0 +1,30 @@
+Mali Maison Electronique (Server) : Besoins
+
+Base de Données :
+
+--> Informations des Produits
+--> E-mails et (prénom et nom) des individus ayant demandé un devis
+
+Architecture de Fichier :
+
+--> Un dossier de migration : Contient les fichiers de migration Entity Framework pour gérer les modifications du schéma de la base de données.
+--> Un dossier pour les fichiers PDF : Stocke les devis générés en PDF.
+--> Des dossiers pour :
+--> Les contrôleurs (Controllers) : Contient les contrôleurs responsables des interactions avec l'utilisateur.
+--> Les modèles (Models) : Contient les modèles de données.
+--> Le contexte de base de données (Data) : Contient le DbContext.
+--> Les services (Service) : Contient les services pour gérer la logique métier.
+
+Fonctionnalités à Implémenter :
+--> CRUD pour les Produits : Créer, lire, mettre à jour et supprimer les produits.
+--> Gestion de l'Envoi du Fichier : Envoi du PDF du devis à l'adresse e-mail du client.
+--> Mise en Place de CORS : Configurer les politiques CORS pour permettre les requêtes depuis d'autres origines.
+--> Swagger : Générer une documentation interactive de l'API.
+--> Anti-injection SQL : Protéger l'application contre les attaques d'injection SQL.
+--> Autorisation et Authentification : Assurer que seuls les utilisateurs autorisés peuvent gérer les produits.
+
+Technologies et Librairies :
+--> Entity Framework Core : Pour l'accès et la gestion des données.
+--> ASP.NET Core : Pour le développement de l'application web.
+--> Cypress : Pour les tests end-to-end.
+--> Postman : Pour tester les API.
