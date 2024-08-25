@@ -8,6 +8,8 @@ using iText.Layout.Element;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.IO;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace MaliMaisonApi.Controllers;
 
@@ -20,7 +22,7 @@ public class QuoteRequestController : ControllerBase {
         _quoteRequest = quoteRequest;
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet]
     public IEnumerable<QuoteRequest> GetAll() {
         return _quoteRequest.Requests.ToList();
@@ -47,57 +49,86 @@ public class QuoteRequestController : ControllerBase {
 
         if(quoteRequest.Email == null)      throw new ArgumentNullException("Email can't be null");
 
-        bool emailSent = SendEmailWithPdf(quoteRequest.Email, pdfPath);
+        bool emailSent = SendEmailWithSendGrid(quoteRequest.Email, pdfPath).Result;
 
         if(!emailSent)     return StatusCode(500, "failed to send email");
 
         return CreatedAtAction(nameof(GetById), new{ id = quoteRequest.Id}, quoteRequest);
     }
 
-    private string GeneratePdf(QuoteRequest quoteRequest) {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", $"Quote_{quoteRequest.Id}.pdf");
+private string GeneratePdf(QuoteRequest quoteRequest) {
+    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", $"Quote_{quoteRequest.FirstName}.pdf");
 
-        using(PdfWriter writer = new PdfWriter(filePath)) {
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
+    using(PdfWriter writer = new PdfWriter(filePath)) {
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
 
-            document.Add(new Paragraph("Devis"));
-            document.Add(new Paragraph($"Prenom et Nom: Mr/Mme {quoteRequest.FirstName} {quoteRequest.Name}"));
-            document.Add(new Paragraph($"Email: {quoteRequest.Email}"));
-            document.Add(new Paragraph($"Date: {quoteRequest.RequestTime}"));
-            document.Add(new Paragraph($"Produits: "));
+        // Ajout de l'adresse et du destinataire
+        document.Add(new Paragraph($"À ").SetFontSize(24).SetBold());
 
-            foreach(var product in quoteRequest.Cameras)
-                document.Add(new Paragraph($"{product.Name} | {product.Model} | {product.Price:C}"));
+        document.Add(new Paragraph($"Mr./Mme {quoteRequest.FirstName} {quoteRequest.Name}"));
 
-            document.Add(new Paragraph($"Total Price: {quoteRequest.ToltalPrice:C}"));
+        document.Add(new Paragraph($"Email: {quoteRequest.Email}"));
+        document.Add(new Paragraph($"Date: {quoteRequest.RequestTime}"));
+        document.Add(new Paragraph("\n"));
 
-            document.Close();
+        // Création de la table
+        Table table = new Table(4); // 4 colonnes
+        table.AddHeaderCell("QTE");
+        table.AddHeaderCell("DESCRIPTION+Model");
+        table.AddHeaderCell("PRIX UNITAIRE");
+        table.AddHeaderCell("TOTAL DE LA LIGNE");
+
+        decimal totalPrice = 0;
+
+        foreach(var product in quoteRequest.Cameras) {
+            table.AddCell("1"); // Quantité
+            table.AddCell($"{product.Name} | {product.Model}"); // Description + Model
+            table.AddCell($"{product.Price:C}"); // Prix Unitaire
+            table.AddCell($"{product.Price:C}"); // Total de la ligne (Quantité x Prix unitaire)
+            totalPrice += product.Price;
         }
-            return filePath;
+
+        // Ajout d'une cellule pour le total général
+        table.AddCell(new Cell(1, 3).Add(new Paragraph("TOTAL").SetBold()));
+        table.AddCell(new Cell().Add(new Paragraph($"{totalPrice:C}").SetBold()));
+
+        document.Add(table);
+
+        // Ajout du message de remerciement
+        document.Add(new Paragraph("\n\nNOUS VOUS REMERCIONS DE VOTRE CONFIANCE.").SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+        document.Close();
     }
-
-    private bool SendEmailWithPdf(string recipientEmail, string pdfPath) {
-        try {
-            using(MailMessage mail = new MailMessage()) {
-                mail.From = new MailAddress("traoredjobengs22@gmail.com");
-                mail.To.Add(recipientEmail);
-                mail.Subject = "Votre devis gratuit";
-                mail.Body = "Veuillez trouver ci-joint votre devis";
-                mail.IsBodyHtml = true;
-
-                Attachment attachment = new Attachment(pdfPath, MediaTypeNames.Application.Pdf);
-                mail.Attachments.Add(attachment);
-
-                using(SmtpClient smtp = new SmtpClient("smtp.gmail.com", 25)) {
-                    smtp.Credentials = new System.Net.NetworkCredential("traoredjobengs22@gmail.com", "tiemokotraore");
-                    smtp.EnableSsl = true;
-                    smtp.Send(mail);
-                }
-            }
-                return true;
-        } catch(Exception) {
-            return false;
-        }
-    }
+    return filePath;
 }
+
+
+     private async Task<bool> SendEmailWithSendGrid(string recipientEmail, string pdfPath) {
+            var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+            Console.WriteLine(apiKey);
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("traoredjobengs22@gmail.com", "MaliMaison");
+            var subject = "Votre devis gratuit";
+            var to = new EmailAddress(recipientEmail);
+            var plainTextContent = "Veuillez trouver ci-joint votre devis";
+            var htmlContent = "<strong>Veuillez trouver ci-joint votre devis</strong>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+
+            using (var fileStream = new FileStream(pdfPath, FileMode.Open, FileAccess.Read)) {
+                var bytes = new byte[fileStream.Length];
+                fileStream.Read(bytes, 0, (int)fileStream.Length);
+                msg.AddAttachment("Quote.pdf", Convert.ToBase64String(bytes), "application/pdf");
+            }
+
+                var response = await client.SendEmailAsync(msg);
+                var responseBody = await response.Body.ReadAsStringAsync(); // Lire le corps de la réponse
+
+                // Affichez les détails de la réponse dans la console
+                Console.WriteLine($"Response Status Code: {response.StatusCode}");
+                Console.WriteLine($"Response Body: {responseBody}");
+
+                return response.StatusCode == System.Net.HttpStatusCode.OK || 
+                    response.StatusCode == System.Net.HttpStatusCode.Accepted;
+                    }
+    }

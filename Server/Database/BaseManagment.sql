@@ -1,9 +1,9 @@
-CREATE DATABASE QuoteRequestDb
+CREATE DATABASE CameraDb
 ON PRIMARY (
-    NAME = QuoteRequestDb,
-    FILENAME = 'E:\Devellopment_projects\Mali_Maison_Electronique\Server\Database\QuoteRequests\QuoteRequestDb.mdf'
+    NAME = CameraDb,
+    FILENAME = 'E:\Devellopment_projects\Mali_Maison_Electronique\Server\Database\Camera\CameraDb.mdf'
 )
 LOG ON (
-    NAME = QuoteRequestDb_log,
-    FILENAME = 'E:\Devellopment_projects\Mali_Maison_Electronique\Server\Database\QuoteRequests\QuoteRequestDb_log.ldf'
+    NAME = CameraDb_log,
+    FILENAME = 'E:\Devellopment_projects\Mali_Maison_Electronique\Server\Database\Camera\CameraDb_log.ldf'
 );
