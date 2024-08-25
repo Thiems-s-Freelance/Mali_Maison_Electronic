@@ -33,7 +33,7 @@ public class ProductController : ControllerBase {
     }
 
     //Ajouter un produit
-    [Authorize]
+    //[Authorize]
     [HttpPost]
     public IActionResult Add([FromBody] Camera product) {
         if(product == null)      return BadRequest();

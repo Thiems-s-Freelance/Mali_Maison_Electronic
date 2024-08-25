@@ -5,5 +5,5 @@ public class Camera {
     public string? Name { get; set; }
     public string? Model { get; set; }
     public int Stock { get; set; }
-    public uint Price { get; set; }
+    public int Price { get; set; }
 }
