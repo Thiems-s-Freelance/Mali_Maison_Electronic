@@ -4,54 +4,40 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace MaliMaisonApi.Data;
 
-public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<CameraDbContext> {
-        public CameraDbContext CreateDbContext(string[] args) {
+public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext> {
+        public ApplicationDbContext CreateDbContext(string[] args) {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("CameraConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("Connection string 'CameraConnection' Not found.");
+                throw new InvalidOperationException("Connection string 'DefaultConnection' Not found.");
             }
 
-            var optionsBuilder = new DbContextOptionsBuilder<CameraDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
 
-            return new CameraDbContext(optionsBuilder.Options);
+            return new ApplicationDbContext(optionsBuilder.Options);
         }
 }
 
-public class QuoteDesignTimeDbContextFactory : IDesignTimeDbContextFactory<QuoteRequestDbContext> {
-        public QuoteRequestDbContext CreateDbContext(string[] args) {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            var connectionString = configuration.GetConnectionString("QuoteRequestConnection");
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("Connection string 'QuoteRequestConnection' Not found.");
-            }
-
-            var optionsBuilder = new DbContextOptionsBuilder<QuoteRequestDbContext>();
-            optionsBuilder.UseSqlServer(connectionString);
-
-            return new QuoteRequestDbContext(optionsBuilder.Options);
-        }
-}
-
-public class CameraDbContext : DbContext {
-    public CameraDbContext (DbContextOptions<CameraDbContext> options) : base(options) { }
+public class ApplicationDbContext : DbContext {
+    public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options) : base(options) { }
     public DbSet<Camera> Cameras { get; set; } = null!;
-}
-
-public class QuoteRequestDbContext : DbContext {
-    public QuoteRequestDbContext (DbContextOptions<QuoteRequestDbContext> options) : base(options) { }
     public DbSet<QuoteRequest> Requests { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        // Configure la précision et l'échelle pour la colonne Price
+        modelBuilder.Entity<Camera>()
+            .Property(c => c.Price)
+            .HasPrecision(18, 2); // Précision de 18 chiffres, dont 2 après la virgule
+
+        // Configurez d'autres entités et propriétés ici si nécessaire
+
+        base.OnModelCreating(modelBuilder);
+    }
 }

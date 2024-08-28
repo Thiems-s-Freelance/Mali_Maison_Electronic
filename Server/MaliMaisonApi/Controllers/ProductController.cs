@@ -9,10 +9,10 @@ namespace MaliMaisonApi.Controllers;
 [Route("api/[controller]")]
 
 public class ProductController : ControllerBase {
-    private readonly CameraDbContext _product;
+    private readonly ApplicationDbContext _product;
 
     // Mise en place du Constructeur
-    public ProductController(CameraDbContext product) {
+    public ProductController(ApplicationDbContext product) {
         _product = product;
     }
 
@@ -55,7 +55,6 @@ public class ProductController : ControllerBase {
         product.Name = updateProduct.Name;
         product.Model = updateProduct.Model;
         product.Price = updateProduct.Price;
-        product.Stock = updateProduct.Stock;
 
         _product.Cameras.Update(product);
         _product.SaveChanges();
@@ -64,7 +63,7 @@ public class ProductController : ControllerBase {
     }
 
     //Supprimmer un produit
-    [Authorize]
+    //[Authorize]
     [HttpDelete("{id}")]
     public IActionResult Delete(int id) {
         var product = _product.Cameras.Find(id);
@@ -75,5 +74,9 @@ public class ProductController : ControllerBase {
         _product.SaveChanges();
 
         return NoContent();
+    }
+
+    private bool ProductExists(int id) {
+        return _product.Cameras.Any(e => e.Id == id);
     }
 }

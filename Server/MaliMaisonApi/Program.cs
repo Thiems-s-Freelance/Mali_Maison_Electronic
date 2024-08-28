@@ -20,17 +20,12 @@ namespace MaliMaisonApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var connectionString = builder.Configuration.GetConnectionString("CameraConnection")
-                ?? throw new ArgumentNullException("CameraConnection", "DefaultConnection is not configured");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new ArgumentNullException("DefaultConnection", "DefaultConnection is not configured");
 
-            var userConnection = builder.Configuration.GetConnectionString("QuoteRequestConnection")
-                ?? throw new ArgumentNullException("QuoteRequestConnection", "UserConnection is not configured");
+            builder.Services.AddDbContext<ApplicationDbContext>( options =>
+                            options.UseSqlServer(connectionString));
 
-            builder.Services.AddDbContext<CameraDbContext>(options => 
-                    options.UseSqlServer(connectionString));
-
-            builder.Services.AddDbContext<QuoteRequestDbContext>(options =>
-                    options.UseSqlServer(userConnection));
 
             var jwtkey = builder.Configuration["jwt:key"]
                 ?? throw new ArgumentNullException("Jwt:Key", "Jwt:Key is not configured");
