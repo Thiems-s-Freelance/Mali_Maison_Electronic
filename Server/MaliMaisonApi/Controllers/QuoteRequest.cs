@@ -16,34 +16,32 @@ namespace MaliMaisonApi.Controllers;
 [Route("api/[controller]")]
 public class QuoteRequestController : ControllerBase
 {
-    private readonly ApplicationDbContext _quoteRequest;
-    private readonly ApplicationDbContext _camera;
+    private readonly ApplicationDbContext _context;
 
-    public QuoteRequestController(ApplicationDbContext quoteRequest, ApplicationDbContext camera)
+    public QuoteRequestController(ApplicationDbContext context)
     {
-        _quoteRequest = quoteRequest;
-        _camera = camera;
+        _context = context;
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpGet]
     public IEnumerable<QuoteRequest> GetAll()
     {
-        return _quoteRequest.Requests.ToList();
+        return _context.Requests.ToList();
     }
 
     [Authorize]
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        var quoteRequest = _quoteRequest.Requests.Find(id);
+        var quoteRequest = _context.Requests.Find(id);
 
         if (quoteRequest == null) return NotFound();
 
         return Ok(quoteRequest);
     }
 
-    [HttpPost("quote_request")]
+    [HttpPost()]
     public IActionResult AddRequest([FromBody] QuoteRequest quoteRequest)
     {
         if (quoteRequest == null || string.IsNullOrEmpty(quoteRequest.Email))
@@ -53,7 +51,7 @@ public class QuoteRequestController : ControllerBase
 
         foreach (var product in quoteRequest.Products)
         {
-            var camera = _camera.Cameras.Find(product.ProductId);
+            var camera = _context.Cameras.Find(product.ProductId);
 
             if(camera == null)      return BadRequest($"Camera with ID {product.ProductId} does not exitst");
 
@@ -71,8 +69,8 @@ public class QuoteRequestController : ControllerBase
         quoteRequest.RequestTime = DateTime.Now;
         quoteRequest.Products = camerasToAdd;
 
-        _quoteRequest.Requests.Add(quoteRequest);
-        _quoteRequest.SaveChanges();
+        _context.Requests.Add(quoteRequest);
+        _context.SaveChanges();
 
         // Génération du PDF
         string pdfPath;
@@ -106,7 +104,7 @@ public class QuoteRequestController : ControllerBase
 
     private string GeneratePdf(QuoteRequest quoteRequest)
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", $"Quote_{quoteRequest.Name}.pdf");
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", $"Devis_{quoteRequest.FirstName}.pdf");
 
         using (PdfWriter writer = new PdfWriter(filePath))
         {
@@ -136,10 +134,10 @@ public class QuoteRequestController : ControllerBase
 
             // Création de la table
             Table table = new Table(4); // 4 colonnes
-            table.AddHeaderCell("QTE");
-            table.AddHeaderCell("DESCRIPTION+Model");
-            table.AddHeaderCell("PRIX UNITAIRE");
-            table.AddHeaderCell("TOTAL DE LA LIGNE");
+            table.AddHeaderCell("QTE").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("DESCRIPTION+Model").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("PRIX UNITAIRE").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("TOTAL DE LA LIGNE").SetTextAlignment(TextAlignment.CENTER);
 
             decimal totalPrice = 0;
             decimal totalLine;
@@ -180,7 +178,7 @@ public class QuoteRequestController : ControllerBase
         }
 
         var client = new SendGridClient(apiKey);
-        var from = new EmailAddress("traoredjobengs22@gmail.com", "MaliMaison");
+        var from = new EmailAddress("malimaisonelectronic@gmail.com", "Mali Maison Electronique");
         var subject = "Votre devis gratuit";
         var to = new EmailAddress(recipientEmail);
         var plainTextContent = "Veuillez trouver ci-joint votre devis";

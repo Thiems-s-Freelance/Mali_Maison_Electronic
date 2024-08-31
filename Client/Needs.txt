@@ -1,0 +1,36 @@
+
+Mali Maison Electronique (Frontend) : Besoins
+
+Technologies à Utiliser :
+1. **React** : Pour construire l'interface utilisateur.
+2. **React Router** : Pour la navigation entre les pages.
+3. **Formik** : Pour gérer les formulaires, notamment celui de contact et de demande de devis.
+4. **Yup** : Pour la validation des formulaires avec Formik.
+5. **CSS Modules** ou **Styled Components** : Pour le stylisme des composants.
+6. **Fetch** : Pour les requêtes HTTP vers le backend.
+7. **Framer Motion** ou **React Spring** : Pour les animations des transitions de pages et des fenêtres modales.
+8. **React Icons** : Pour inclure les icônes des réseaux sociaux et autres dans l'application.
+10. **React Toastify** : Pour afficher les notifications après l'envoi des formulaires ou en cas d'erreur.
+11. **Google Maps API** : Pour afficher la localisation de l'entreprise sur une carte (optionnel).
+
+Fonctionnalités à Implémenter :
+1. Page d'Accueil:
+   - Afficher une bannière avec le logo et le slogan.
+   - Bouton pour démarrer la demande de devis.
+   - Section pour visualiser les produits (caméras) avec nom, prix, modèle, et image.
+   - Sélection des caméras pour un devis avec gestion du panier.
+
+2. Page des Services :
+   - Liste des services proposés avec une description pour chacun.
+   - Bouton "Voir les produits" pour la vente, avec une fenêtre modale listant les caméras.
+   - Boutons "En savoir plus" pour l'entretien et la configuration, ouvrant une fenêtre modale avec des descriptions détaillées.
+
+3. Page de Contact :
+   - Informations sur l'entreprise : téléphone, email, adresse, horaires d'ouverture, réseaux sociaux.
+   - Formulaire de contact avec champs nom, prénom, email, message.
+   - Soumission du formulaire avec affichage d'une notification de succès ou d'erreur.
+
+4. Navigation Globale :
+   - Utilisation de React Router pour naviguer entre les pages (Accueil, Services, Contact).
+   - Menu de navigation responsive pour mobile.
+   - Pied de page commun avec les icônes des réseaux sociaux.

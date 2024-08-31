@@ -2,7 +2,7 @@ Mali Maison Electronique (Server) : Besoins
 
 Base de Données :
 
---> Informations des Produits
+--> Informations des Produits 
 --> E-mails et (prénom et nom) des individus ayant demandé un devis
 
 Architecture de Fichier :
