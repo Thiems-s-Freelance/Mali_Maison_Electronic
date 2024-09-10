@@ -1,3 +1,223 @@
+/* Style de base */
+.present-container {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .home_present {
-    margin-left: 20%;
-} 
+    height: 200px;
+    cursor: pointer;
+    animation: start 0.3s ease-in-out forwards;
+}
+
+@keyframes start {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    } to {
+        transform: translateX(0);
+        margin-top: 0px;
+    }
+}
+
+.bar {
+    background-color: white;
+    width: 1.5px;
+    height: 190px;
+    animation: along 0.4s ease-in-out;
+}
+
+@keyframes along {
+    0% {
+        height: 50px;
+    }
+    85% {
+        height: 200px;
+    }
+    100% {
+        height: 190px;
+    }
+}
+
+.present-text {
+    font-size: 54px;
+    font-family: Inria Sans;
+}
+
+.present-text2 {
+    font-size: 22px;
+    font-weight: 100;
+}
+
+.btn-container {
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.present-btn {
+    background-color: rgb(255, 255, 255);
+    height: 2.9em;
+    width: 17.5rem;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 3px;
+}
+
+.present-btn:hover {
+    background-color: #0084e3;
+}
+
+.text-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 7.5rem;
+}
+
+.text {
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.foot {
+    display: grid;
+    place-items: center;
+}
+
+.bar2 {
+    background-color: white;
+    height: 1.75px;
+    width: 7.5rem;
+    animation: along2 0.4s ease-in-out forwards;
+}
+
+@keyframes along2 {
+    0% {
+        width: 1rem;
+    }
+    85% {
+        width: 8rem;
+    }
+    100% {
+        width: 7.5rem;
+    }
+}
+
+.rs-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+}
+
+.logo {
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Responsive pour les petits écrans */
+@media only screen and (max-width: 768px) {
+    .present-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .home_present {
+        height: 150px;
+        margin-bottom: 1rem;
+    }
+
+    .bar {
+        display: none;
+    }
+
+    .present-text {
+        font-size: 38px;
+    }
+
+    .present-text2 {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+
+    .btn-container {
+        margin-top: 50px;
+    }
+
+    .present-btn {
+        width: 90%;
+    }
+
+    .text-container {
+        margin-top: 5rem;
+        padding: 0 20px;
+    }
+
+    .text {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .bar2 {
+        width: 5rem;
+    }
+
+    .rs-logos .logo {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .present-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .home_present {
+        height: 120px;
+        margin-bottom: 1rem;
+    }
+
+    .bar {
+        display: none;
+    }
+
+    .present-text {
+        font-size: 30px;
+    }
+
+    .present-text2 {
+        font-size: 16px;
+    }
+
+    .btn-container {
+        margin-top: 30px;
+    }
+
+    .present-btn {
+        width: 85%;
+        height: 2.5em;
+        font-size: 16px;
+    }
+
+    .text-container {
+        margin-top: 3rem;
+        padding: 0 15px;
+    }
+
+    .text {
+        font-size: 16px;
+    }
+
+    .bar2 {
+        width: 4rem;
+    }
+
+    .rs-logos .logo {
+        display: none;
+    }
+}

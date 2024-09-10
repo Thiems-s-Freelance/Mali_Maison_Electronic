@@ -10,12 +10,10 @@ namespace MaliMaisonApi.Controllers;
 
 public class ProductController : ControllerBase {
     private readonly ApplicationDbContext _product;
-    private readonly IWebHostEnvironment _env;
 
     // Mise en place du Constructeur
-    public ProductController(ApplicationDbContext product, IWebHostEnvironment env) {
+    public ProductController(ApplicationDbContext product) {
         _product = product;
-        _env = env;
     }
 
     //GET de tous les produits
@@ -36,48 +34,48 @@ public class ProductController : ControllerBase {
 
     //Ajouter un produit
     //[Authorize]
-    [HttpPost]
-    public async Task<IActionResult> Add([FromForm] CameraDto product) {
-        if(product == null)      return BadRequest();
+[HttpPost]
+public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFormFile file)
+{
+    if (cameraDto == null || file == null)
+        return BadRequest("invalid input");
 
-        string? imageUrl = null;
+    // Traitement du fichier
+    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
-        if(product.Image != null && product.Image.Length > 0) {
-            var uploadPath = Path.Combine(_env.WebRootPath, "images");
-
-            if(!Directory.Exists(uploadPath)) {
-                Directory.CreateDirectory(uploadPath);
-            }
-
-            var fileName = Path.GetFileNameWithoutExtension(product.Image.FileName);
-            var extension = Path.GetExtension(product.Image.FileName);
-            var uniqueFileName = $"{fileName}_{Guid.NewGuid()}{extension}";
-            var filePath = Path.Combine(uploadPath, uniqueFileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create)) {
-                await product.Image.CopyToAsync(stream);
-            }
-
-            imageUrl = $"/images/{uniqueFileName}";
-        }
-
-        var camera = new Camera {
-            Name = product.Name,
-            Model = product.Model,
-            Price = product.Price,
-            ImageUrl = imageUrl
-        };
-
-        _product.Cameras.Add(camera);
-        _product.SaveChanges();
-
-        return CreatedAtAction(nameof(GetById), new{ id = camera.Id}, camera);
+    if (!Directory.Exists(imagePath)) {
+        Directory.CreateDirectory(imagePath);
     }
+
+    var filePath = Path.Combine(imagePath, file.FileName);
+
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await file.CopyToAsync(stream);
+    }
+
+    // Création et ajout de l'objet Camera
+    var camera = new Camera
+    {
+        Name = cameraDto.Name,
+        Model = cameraDto.Model,
+        Price = cameraDto.Price,
+        Stock = cameraDto.Stock,
+        ImageUrl = $"/images/{file.FileName}"
+    };
+
+    _product.Cameras.Add(camera);
+    await _product.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(GetById), new { id = camera.Id }, camera);
+}
+
+
 
     //Modifier un produit
     //[Authorize]
     [HttpPut("{id}")]
-    public IActionResult Update([FromForm] Camera updateProduct, int id) {
+    public IActionResult Update([FromBody] Camera updateProduct, int id) {
         var product = _product.Cameras.Find(id);
 
         if(product == null)     return NotFound();
@@ -109,12 +107,5 @@ public class ProductController : ControllerBase {
 
     private bool ProductExists(int id) {
         return _product.Cameras.Any(e => e.Id == id);
-    }
-
-    public class CameraDto {
-        public string? Name { get; set; }
-        public string? Model { get; set; }
-        public decimal Price { get; set; }
-        public IFormFile? Image { get; set; } // Champ pour gérer l'image uploadée
     }
 }

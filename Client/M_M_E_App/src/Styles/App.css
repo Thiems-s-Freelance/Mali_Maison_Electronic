@@ -3,10 +3,9 @@
     justify-content: end;
 }
 
-
 .accueil, .service, .contact {
     color:#ffffff; 
-    font-size:20px;
+    font-size:17.5px;
     font-weight: lighter;
     text-decoration: none;
 }
@@ -17,12 +16,15 @@
 
 .home-page .accueil {
     color: #0084e3;
+    text-decoration: underline;
 }
 
 .services-page .service {
     color: #0084e3;
+    text-decoration: underline;
 }
 
 .contact-page .contact {
     color: #0084e3;
+    text-decoration: underline;
 }

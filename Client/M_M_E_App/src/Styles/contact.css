@@ -1,0 +1,70 @@
+/* Ne change pas le style global, juste quelques ajustements */
+
+/* Items de contact */
+.contact-item {
+    text-align: center;
+    height: 10rem;
+    width: 10rem;
+    background-image: url('../assets/form-background.svg');
+    background-size: cover;
+    background: tr;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem;
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.contact-item:hover {
+    box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.2), 0 6px 20px 0 rgba(255, 255, 255, 0.19);
+}
+
+/* Alignement des icônes des réseaux sociaux */
+.contact-info {
+    display: flex;
+    justify-content: center; /* Pas centré, pour garder l'alignement gauche */
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Responsive uniquement pour petits écrans */
+
+/* Medium devices (tablets, 768px and up) */
+@media (max-width: 768px) {
+    .contact-item {
+        height: 8rem;
+        width: 8rem;
+    }
+
+    .contact-item i {
+        font-size: 4rem;
+    }
+
+    .contact-item h4 {
+        font-size: 1rem;
+    }
+
+    .contact-info {
+        justify-content: center; /* Se centre seulement sur petits écrans */
+    }
+}
+
+/* Small devices (phones, 480px and up) */
+@media (max-width: 480px) {
+    .contact-item {
+        height: 7rem;
+        width: 7rem;
+    }
+
+    .contact-item i {
+        font-size: 1.5rem;
+    }
+
+    .contact-item h4 {
+        font-size: 0.9rem;
+    }
+}

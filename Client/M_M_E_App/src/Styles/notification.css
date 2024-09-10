@@ -1,0 +1,21 @@
+.success-notif {
+    background-color: rgba(0, 255, 60, 0.479);
+    border: none;
+    border-radius: 5px;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    justify-content: center;
+    place-items: center;
+}
+
+.error-notif {
+    background-color: rgba(255, 65, 65, 0.334);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    width: 10rem;
+    height: 3.5rem;
+    text-align: center;
+    font-size: large;
+}

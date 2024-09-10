@@ -84,7 +84,7 @@ namespace MaliMaisonApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CameraId")
+                    b.Property<int?>("CameraId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -109,9 +109,7 @@ namespace MaliMaisonApi.Migrations
                 {
                     b.HasOne("MaliMaisonApi.Models.Camera", "Camera")
                         .WithMany()
-                        .HasForeignKey("CameraId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CameraId");
 
                     b.HasOne("MaliMaisonApi.Models.QuoteRequest", null)
                         .WithMany("Products")

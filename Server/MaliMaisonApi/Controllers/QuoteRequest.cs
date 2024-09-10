@@ -9,6 +9,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using iText.Layout.Properties;
 using iText.IO.Image;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaliMaisonApi.Controllers;
 
@@ -23,11 +24,14 @@ public class QuoteRequestController : ControllerBase
         _context = context;
     }
 
-    [Authorize]
+   // [Authorize]
     [HttpGet]
     public IEnumerable<QuoteRequest> GetAll()
     {
-        return _context.Requests.ToList();
+        return _context.Requests
+                       .Include(q => q.Products)
+                       .ThenInclude(p => p.Camera) // Inclure les caméras si nécessaire
+                       .ToList();
     }
 
     [Authorize]
@@ -41,7 +45,7 @@ public class QuoteRequestController : ControllerBase
         return Ok(quoteRequest);
     }
 
-    [HttpPost()]
+    [HttpPost]
     public IActionResult AddRequest([FromBody] QuoteRequest quoteRequest)
     {
         if (quoteRequest == null || string.IsNullOrEmpty(quoteRequest.Email))
@@ -102,6 +106,21 @@ public class QuoteRequestController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = quoteRequest.Id }, quoteRequest);
     }
 
+    [HttpDelete("{id}")]
+    public IActionResult Delete (int id) {
+        var quoteRequest = _context.Requests.Include(r => r.Products).FirstOrDefault(r => r.Id == id);
+        
+        if(quoteRequest == null)    return NotFound();
+
+        if (quoteRequest.Products != null && quoteRequest.Products.Any()) {
+            _context.RemoveRange(quoteRequest.Products);
+        }
+        _context.Requests.Remove(quoteRequest);  
+        _context.SaveChanges();
+
+        return NoContent();   
+    }
+
     private string GeneratePdf(QuoteRequest quoteRequest)
     {
         string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", $"Devis_{quoteRequest.FirstName}.pdf");
@@ -126,18 +145,22 @@ public class QuoteRequestController : ControllerBase
             document.Add(logo);
 
             // Ajout de l'adresse et du destinataire
+            document.Add(new Paragraph($"Mali Maison Electronique ").SetFontSize(26).SetTextAlignment(TextAlignment.CENTER));
+            document.Add(new Paragraph($"+223 53 03 11 23").SetFontSize(10));
+            document.Add(new Paragraph($"+223 92 59 63 44").SetFontSize(10));
+
             document.Add(new Paragraph($"À ").SetFontSize(24).SetBold());
             document.Add(new Paragraph($"Mr./Mme {quoteRequest.FirstName} {quoteRequest.Name}"));
             document.Add(new Paragraph($"Email: {quoteRequest.Email}"));
-            document.Add(new Paragraph($"Date: {quoteRequest.RequestTime}"));
+            document.Add(new Paragraph($"Date et heure: {quoteRequest.RequestTime}"));
             document.Add(new Paragraph("\n"));
 
             // Création de la table
             Table table = new Table(4); // 4 colonnes
-            table.AddHeaderCell("QTE").SetTextAlignment(TextAlignment.CENTER);
-            table.AddHeaderCell("DESCRIPTION+Model").SetTextAlignment(TextAlignment.CENTER);
-            table.AddHeaderCell("PRIX UNITAIRE").SetTextAlignment(TextAlignment.CENTER);
-            table.AddHeaderCell("TOTAL DE LA LIGNE").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("Qté").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("Description et Model").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("Prix Unitaire").SetTextAlignment(TextAlignment.CENTER);
+            table.AddHeaderCell("Total de la ligne").SetTextAlignment(TextAlignment.CENTER);
 
             decimal totalPrice = 0;
             decimal totalLine;
@@ -189,7 +212,7 @@ public class QuoteRequestController : ControllerBase
         {
             var bytes = new byte[fileStream.Length];
             await fileStream.ReadAsync(bytes, 0, (int)fileStream.Length);
-            msg.AddAttachment("Quote.pdf", Convert.ToBase64String(bytes), "application/pdf");
+            msg.AddAttachment("Devis.pdf", Convert.ToBase64String(bytes), "application/pdf");
         }
 
         var response = await client.SendEmailAsync(msg);

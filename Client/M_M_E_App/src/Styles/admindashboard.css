@@ -1,0 +1,75 @@
+/* Style de base */
+.dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard {
+    display: grid;
+    place-items: center;
+    margin-top: 140px;
+}
+
+.menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item {
+    height: 200px;
+    width: 200px;
+    background-color: white;
+    border-radius: 5px;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Style responsive pour les petits écrans */
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin-top: 50px;
+    }
+
+    .menu-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .item {
+        height: 165px;
+        width: 160px;
+    }
+
+    .item i {
+        font-size: 4rem;
+    }
+
+    .item h4 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        margin-top: 30px;
+    }
+
+    .item {
+        height: 175px;
+        width: 150px;
+    }
+
+    .item i {
+        font-size: 3.5rem;
+    }
+
+    .item h4 {
+        font-size: 0.875rem;
+    }
+}
