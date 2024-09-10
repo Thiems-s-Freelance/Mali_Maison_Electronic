@@ -1,0 +1,1 @@
+user-agent: *Disallow: /api/Allow: /Sitemap: https://tondomaine.com/sitemap.xml
