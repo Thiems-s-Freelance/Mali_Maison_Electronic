@@ -1,3 +1,5 @@
+#nullable disable
+
 using MaliMaisonApi.Data;
 using MaliMaisonApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -18,10 +20,12 @@ namespace MaliMaisonApi.Controllers;
 public class QuoteRequestController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public QuoteRequestController(ApplicationDbContext context)
+    public QuoteRequestController(ApplicationDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
    // [Authorize]
@@ -168,8 +172,8 @@ public class QuoteRequestController : ControllerBase
             foreach (var product in quoteRequest.Products)
             {
                 table.AddCell(new Cell().Add(new Paragraph($"{product.Quantity}")).SetTextAlignment(TextAlignment.CENTER)); // Quantité
-                table.AddCell(new Cell().Add(new Paragraph($"{product.Camera.Name} | {product.Camera.Model}")).SetTextAlignment(TextAlignment.CENTER)); // Description + Model
-                table.AddCell(new Cell().Add(new Paragraph($"{product.Camera.Price:C}")).SetTextAlignment(TextAlignment.CENTER)); // Prix Unitaire
+                table.AddCell(new Cell().Add(new Paragraph($"{product.Camera?.Name} | {product.Camera?.Model}")).SetTextAlignment(TextAlignment.CENTER)); // Description + Model
+                table.AddCell(new Cell().Add(new Paragraph($"{product.Camera?.Price:C}")).SetTextAlignment(TextAlignment.CENTER)); // Prix Unitaire
 
                 totalLine = product.Camera.Price * product.Quantity;
                 table.AddCell(new Cell().Add(new Paragraph($"{totalLine:C}")).SetTextAlignment(TextAlignment.CENTER)); // Total de la ligne (Quantité x Prix unitaire)
@@ -194,7 +198,7 @@ public class QuoteRequestController : ControllerBase
 
     private async Task<bool> SendEmailWithSendGrid(string recipientEmail, string pdfPath)
     {
-        var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+        var apiKey = _configuration["SendGrid:ApiKey"];
         if (string.IsNullOrEmpty(apiKey))
         {
             throw new InvalidOperationException("SendGrid API key is not configured.");

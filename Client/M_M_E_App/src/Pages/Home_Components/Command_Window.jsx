@@ -6,7 +6,7 @@ import ReactPaginate from 'react-paginate'
 import { QuoteForm } from './Form'
 import { Loading } from '../Notification/Loading'
 import { Validate } from '../Notification/Validation'
-import { Error } from '../Notification/Error'
+import { Error as ErrorNotification } from '../Notification/Error';
 
 const WindowCommand = ({ onClose }) => {
     const [cameras, setCameras] = useState([])
@@ -67,6 +67,7 @@ const WindowCommand = ({ onClose }) => {
             firstName: formData.firstName,
             name: formData.name, 
             email: formData.email,
+            requestTime: new Date().toISOString(),
             products: Object.entries(quantities).filter(([quantity]) => quantity > 0).map(([id, quantity]) => ({
                 productId: parseInt(id, 10),
                 quantity
@@ -83,7 +84,8 @@ const WindowCommand = ({ onClose }) => {
             console.log(quoteRequest)
 
             if(!response.ok) {
-                throw new Error(`Echec lors de soumission, statut: ${response.status}`)
+                const errorResponse = await response.json()
+                throw new Error(errorResponse.message || `Erreur lors de la soumission, statut: ${response.status}`)
             }
 
             const result = await response.json()
@@ -120,7 +122,7 @@ const WindowCommand = ({ onClose }) => {
 
         if(error) {
             const timer = setTimeout(() => {
-                setError(false)
+                setError('')
             }, 2000)
 
             return () => clearTimeout(timer)
@@ -136,7 +138,7 @@ const WindowCommand = ({ onClose }) => {
         <>
         {loading && <Loading />}
         {validate && <Validate />}
-        {error && <Error />}
+        {error && <ErrorNotification />}
             <div className='window-container'>
                 <div className='window'>
                     <i className='bi-x-square close' onClick={onClose}></i>
