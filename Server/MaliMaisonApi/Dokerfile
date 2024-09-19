@@ -1,21 +1,11 @@
-# Étape 1 : Construire l'application
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+# Utiliser l’image .NET SDK comme image de build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
-
-# Copier les fichiers du projet
 COPY . ./
+RUN dotnet publish -c Release -o out
 
-# Restaurer les dépendances et construire l'application
-RUN dotnet restore
-RUN dotnet publish -c Release -o /out
-
-# Étape 2 : Créer une image d'exécution
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+# Utiliser l’image .NET Runtime pour l’exécution
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /out .
-
-# Exposer le port pour l'accès à l'application
-EXPOSE 80
-
-# Lancer l'application
+COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "MaliMaisonApi.dll"]

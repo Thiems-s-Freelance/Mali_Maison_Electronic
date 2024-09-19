@@ -62,7 +62,7 @@ namespace MaliMaisonApi
 
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowSpecificOrigin",
-                builder => builder.WithOrigins("http://localhost:5173")
+                builder => builder.WithOrigins("https://www.mali-maison.com")
                                   .AllowAnyHeader()
                                   .AllowAnyMethod()
                                   .AllowCredentials());
