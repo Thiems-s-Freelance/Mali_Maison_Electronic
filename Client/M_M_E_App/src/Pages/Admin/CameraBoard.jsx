@@ -23,7 +23,7 @@ export const CameraBoard = () => {
     const fetchCamera = async () => {
         try {
             setLoading(true);
-            const response = await fetch('https://localhost:7048/api/Product');
+            const response = await fetch('https://asp.mali-maison.com/api/Product');
 
             if (!response.ok) {
                 throw new Error(`Echec, erreur HTTP statut: ${response.status}`);
@@ -158,7 +158,7 @@ export const CameraBoard = () => {
 
 
 const CameraBoardRow = ({ camera, deleteProduct }) => {
-    const imageUrl = `https://localhost:7048${camera.imageUrl}`
+    const imageUrl = `https://asp.mali-maison.com${camera.imageUrl}`
     const navigate = useNavigate()
     const hashedRoute3 = SHA256('camera-edit').toString()
 
@@ -208,7 +208,7 @@ export const CameraAdd = () => {
             formData.append('stock', values.stock)
             formData.append('file', values.imageUrl)
 
-            const response = await fetch(`http://asp.mali-maison.com/api/Product`, {
+            const response = await fetch(`https://asp.mali-maison.com/api/Product`, {
                 method: 'POST',
                 headers: {
                     'Authorization' : `Bearer ${token}`
@@ -335,7 +335,7 @@ export const CameraEdit = () => {
     
     const fetchCamera = useCallback(async () => {
             setLoading(true);
-            const response = await fetch(`http://asp.mali-maison.com/api/Product/${id}`);
+            const response = await fetch(`https://asp.mali-maison.com/api/Product/${id}`);
 
             if (!response.ok) {
                 throw new Error(`Echec, erreur HTTP statut: ${response.status}`)
@@ -355,7 +355,7 @@ export const CameraEdit = () => {
         setLoading(true)
     
         try {
-            const response = await fetch(`http://asp.mali-maison.com/api/Product/${id}`, {
+            const response = await fetch(`https://asp.mali-maison.com/api/Product/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

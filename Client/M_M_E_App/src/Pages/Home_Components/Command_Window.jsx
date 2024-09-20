@@ -22,7 +22,7 @@ const WindowCommand = ({ onClose }) => {
     const fetchCamera = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://asp.mali-maison.com/api/Product');
+            const response = await fetch('https://asp.mali-maison.com/api/Product');
 
             if (!response.ok) {
                 throw new Error(`Echec, erreur HTTP statut: ${response.status}`);
@@ -74,7 +74,7 @@ const WindowCommand = ({ onClose }) => {
             }))
         }
         try {
-            const response = await fetch('http://asp.mali-maison.com/api/QuoteRequest', {
+            const response = await fetch('https://asp.mali-maison.com/api/QuoteRequest', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -208,7 +208,7 @@ const WindowCommand = ({ onClose }) => {
                         {currentPageItems.map(camera => (
                             <div key={camera.id} style={{ position: 'relative', display: 'inline-block' }} className='image-container'>
                                 <img 
-                                    src={`https://localhost:7048${camera.imageUrl}`} 
+                                    src={`https://asp.mali-maison.com${camera.imageUrl}`} 
                                     alt={`Camera`}
                                     style={{ height: '75px', display: 'block', borderRadius: '2.5px' }} 
                                     className='mx-2'

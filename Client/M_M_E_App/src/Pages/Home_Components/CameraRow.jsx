@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 export function CameraRow({ camera, onAdd, onRemove, quantity }) {
-    const imageUrl = `http://asp.mali-maison.com${camera.imageUrl}`
+    const imageUrl = `https://asp.mali-maison.com${camera.imageUrl}`
 
     return (
         <tr>
