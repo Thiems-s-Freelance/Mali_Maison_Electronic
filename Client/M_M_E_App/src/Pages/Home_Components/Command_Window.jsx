@@ -22,7 +22,7 @@ const WindowCommand = ({ onClose }) => {
     const fetchCamera = async () => {
         try {
             setLoading(true);
-            const response = await fetch('https://localhost:7048/api/Product');
+            const response = await fetch('http://asp.mali-maison.com/api/Product');
 
             if (!response.ok) {
                 throw new Error(`Echec, erreur HTTP statut: ${response.status}`);
@@ -74,7 +74,7 @@ const WindowCommand = ({ onClose }) => {
             }))
         }
         try {
-            const response = await fetch('https://localhost:7048/api/QuoteRequest', {
+            const response = await fetch('http://asp.mali-maison.com/api/QuoteRequest', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
