@@ -83,11 +83,11 @@ namespace MaliMaisonApi
             
             app.UseRouting();
 
+            app.UseCors("AllowSpecificOrigin");
+
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            app.UseCors("AllowSpecificOrigin");
 
             app.MapControllers();
 

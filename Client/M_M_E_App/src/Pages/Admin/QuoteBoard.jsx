@@ -17,7 +17,7 @@ export const QuoteBoard = () => {
     const fetchQuotes = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch('https://localhost:7048/api/QuoteRequest', {
+            const response = await fetch('https://asp.mali-maison.com/api/QuoteRequest', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ export const QuoteBoard = () => {
 
     const deleteQuote = useCallback(async (id) => {
         setLoading(true)
-        const response = await fetch(`https://localhost:7048/api/QuoteRequest/${id}`, {
+        const response = await fetch(`https://asp.mali-maison.com/api/QuoteRequest/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
