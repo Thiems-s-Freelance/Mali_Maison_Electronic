@@ -45,7 +45,7 @@ export const CameraBoard = () => {
 
     const deleteProduct = useCallback(async (id) => {
         setLoading(true)
-        const response = await fetch(`https://localhost:7048/api/Product/${id}`, {
+        const response = await fetch(`https://asp.mali-maison.com/api/Product/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

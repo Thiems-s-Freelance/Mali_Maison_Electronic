@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MaliMaisonApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c7ce110ddbca89093f3b0678c871f907559aa950")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+818b935c4449bb65d11fe696a6b02e8694aa11c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("MaliMaisonApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MaliMaisonApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

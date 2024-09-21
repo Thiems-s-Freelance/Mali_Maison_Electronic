@@ -134,6 +134,7 @@ public class QuoteRequestController : ControllerBase
 
         if (!Directory.Exists(pdfDirectory)) {
             Directory.CreateDirectory(pdfDirectory);
+            Console.WriteLine($"Created directory at {pdfDirectory}");
         }
 
         string filePath = Path.Combine(pdfDirectory, $"Devis_{quoteRequest.FirstName}.pdf");
