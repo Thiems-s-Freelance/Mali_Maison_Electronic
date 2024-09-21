@@ -22,13 +22,16 @@ public class QuoteRequestController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
 
-    public QuoteRequestController(ApplicationDbContext context, IConfiguration configuration)
+    private readonly IWebHostEnvironment _env;
+
+    public QuoteRequestController(ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment env)
     {
         _context = context;
         _configuration = configuration;
+        _env = env;
     }
 
-   // [Authorize]
+    [Authorize]
     [HttpGet]
     public IEnumerable<QuoteRequest> GetAll()
     {
@@ -127,14 +130,20 @@ public class QuoteRequestController : ControllerBase
 
     private string GeneratePdf(QuoteRequest quoteRequest)
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", $"Devis_{quoteRequest.FirstName}.pdf");
+        string pdfDirectory = Path.Combine(_env.WebRootPath, "pdf");
+
+        if (!Directory.Exists(pdfDirectory)) {
+            Directory.CreateDirectory(pdfDirectory);
+        }
+
+        string filePath = Path.Combine(pdfDirectory, $"Devis_{quoteRequest.FirstName}.pdf");
 
         using (PdfWriter writer = new PdfWriter(filePath))
         {
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
-            string logoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Img", "Mali_Maison_Logo.jpg");
+            string logoPath = Path.Combine(_env.WebRootPath, "Img", "Mali_Maison_Logo.jpg");
             ImageData imageData = ImageDataFactory.Create(logoPath);
             Image logo = new Image(imageData);
 

@@ -11,9 +11,12 @@ namespace MaliMaisonApi.Controllers;
 public class ProductController : ControllerBase {
     private readonly ApplicationDbContext _product;
 
+    private readonly IWebHostEnvironment _env;
+
     // Mise en place du Constructeur
-    public ProductController(ApplicationDbContext product) {
+    public ProductController(ApplicationDbContext product, IWebHostEnvironment env) {
         _product = product;
+        _env = env;
     }
 
     //GET de tous les produits
@@ -33,7 +36,7 @@ public class ProductController : ControllerBase {
     }
 
     //Ajouter un produit
-    //[Authorize]
+[Authorize]
 [HttpPost]
 public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFormFile file)
 {
@@ -41,7 +44,7 @@ public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFo
         return BadRequest("invalid input");
 
     // Traitement du fichier
-    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+    var imagePath = Path.Combine(_env.WebRootPath, "images");
 
     if (!Directory.Exists(imagePath)) {
         Directory.CreateDirectory(imagePath);

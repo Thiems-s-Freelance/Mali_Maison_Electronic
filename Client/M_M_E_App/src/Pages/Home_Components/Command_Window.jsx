@@ -142,7 +142,7 @@ const WindowCommand = ({ onClose }) => {
             <div className='window-container'>
                 <div className='window'>
                     <i className='bi-x-square close' onClick={onClose}></i>
-                    <h2 className='title'>Damande de devis</h2>
+                    <h2 className='title'>Demande de devis</h2>
 
                 { showForm ? (
                     <QuoteForm onClose={() => setShowForm(false)} onSubmit={handleFormSubmit} />
