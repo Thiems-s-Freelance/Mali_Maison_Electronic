@@ -139,7 +139,7 @@ const WindowCommand = ({ onClose }) => {
         {loading && <Loading />}
         {validate && <Validate />}
         {error && <ErrorNotification />}
-            <div className='window-container container-fluid'>
+            <div className='window-container'>
                 <div className='window'>
                     <i className='bi-x-square close' onClick={onClose}></i>
                     <h2 className='title'>Demande de devis</h2>
@@ -148,7 +148,7 @@ const WindowCommand = ({ onClose }) => {
                     <QuoteForm onClose={() => setShowForm(false)} onSubmit={handleFormSubmit} />
                 ) : (
                     <>
-                    <div className='table-container'>
+                    <div className='table-container container'>
                         <h2 className='table-title my-3'>Choix des produits</h2>
                         <table className="table my-4">
                             <thead>
