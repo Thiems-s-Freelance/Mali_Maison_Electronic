@@ -139,7 +139,7 @@ const WindowCommand = ({ onClose }) => {
         {loading && <Loading />}
         {validate && <Validate />}
         {error && <ErrorNotification />}
-            <div className='window-container'>
+            <div className='window-container container-fluid'>
                 <div className='window'>
                     <i className='bi-x-square close' onClick={onClose}></i>
                     <h2 className='title'>Demande de devis</h2>

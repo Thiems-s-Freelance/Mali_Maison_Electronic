@@ -48,7 +48,7 @@ export const CameraBoard = () => {
         const response = await fetch(`https://asp.mali-maison.com/api/Product/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', 
                     'Authorization' : `Bearer ${token}`
                 }
         })

@@ -85,25 +85,19 @@ public class QuoteRequestController : ControllerBase
 
         // Génération du PDF
         string pdfPath;
-        try
-        {
+        try {
             pdfPath = GeneratePdf(quoteRequest);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Erreur lors de la génération du PDF : {ex.Message}");
+        } catch (Exception ex) {
+            return StatusCode(500, new { message = "Erreur lors de la génération du PDF", details =  ex.Message});
         }
 
         if (quoteRequest.Email == null)
-            return BadRequest("L'email ne peut pas être nul.");
+            return BadRequest("L'email ne peut pas être null.");
 
         bool emailSent;
-        try
-        {
+        try {
             emailSent = SendEmailWithSendGrid(quoteRequest.Email, pdfPath).Result;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return StatusCode(500, $"Erreur lors de l'envoi de l'email : {ex.Message}");
         }
 

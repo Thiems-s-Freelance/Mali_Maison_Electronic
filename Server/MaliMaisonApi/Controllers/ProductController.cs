@@ -2,6 +2,7 @@ using MaliMaisonApi.Data;
 using MaliMaisonApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaliMaisonApi.Controllers;
 
@@ -44,13 +45,14 @@ public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFo
         return BadRequest("invalid input");
 
     // Traitement du fichier
-    var imagePath = Path.Combine(_env.WebRootPath, "images");
+    var imagePath = "/remote/path/Server/MaliMaisonApi/wwwroot/images";
 
     if (!Directory.Exists(imagePath)) {
         Directory.CreateDirectory(imagePath);
     }
 
-    var filePath = Path.Combine(imagePath, file.FileName);
+    var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+    var filePath = Path.Combine(imagePath, uniqueFileName);
 
     using (var stream = new FileStream(filePath, FileMode.Create))
     {
@@ -64,7 +66,7 @@ public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFo
         Model = cameraDto.Model,
         Price = cameraDto.Price,
         Stock = cameraDto.Stock,
-        ImageUrl = $"/images/{file.FileName}"
+        ImageUrl = $"/images/{uniqueFileName}"
     };
 
     _product.Cameras.Add(camera);
@@ -75,38 +77,51 @@ public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFo
 
 
 
-    //Modifier un produit
-    //[Authorize]
-    [HttpPut("{id}")]
-    public IActionResult Update([FromBody] Camera updateProduct, int id) {
-        var product = _product.Cameras.Find(id);
+//Modifier un produit
+[Authorize]
+[HttpPut("{id}")]
+public IActionResult Update([FromBody] Camera updateProduct, int id) {
+    var product = _product.Cameras.Find(id);
 
-        if(product == null)     return NotFound();
+    if(product == null)     return NotFound();
 
-        product.Name = updateProduct.Name;
-        product.Model = updateProduct.Model;
-        product.Price = updateProduct.Price;
-        product.Stock = updateProduct.Stock;
+    product.Name = updateProduct.Name;
+    product.Model = updateProduct.Model;
+    product.Price = updateProduct.Price;
+    product.Stock = updateProduct.Stock;
 
-        _product.Cameras.Update(product);
-        _product.SaveChanges();
+    _product.Cameras.Update(product);
+    _product.SaveChanges();
 
-        return NoContent();
-    }
+    return NoContent();
+}
 
-    //Supprimmer un produit
-    //[Authorize]
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id) {
-        var product = _product.Cameras.Find(id);
+[Authorize]
+[HttpDelete("{id}")]
+public async Task<IActionResult> Delete(int id) 
+{
+    // Étape 1 : Vérifie si le produit existe
+    var product = await _product.Cameras.FindAsync(id);
+    if (product == null) 
+        return NotFound();
 
-        if(product == null)     return NotFound();
+    // Étape 2 : Supprimer les entrées associées dans QuoteRequestCamera
+    var quoteRequestCameras = await _product.Requests
+        .SelectMany(q => q.Products)
+        .Where(qr => qr.ProductId == id)
+        .ToListAsync();
 
-        _product.Cameras.Remove(product);
-        _product.SaveChanges();
+    _product.RemoveRange(quoteRequestCameras);
 
-        return NoContent();
-    }
+    // Étape 3 : Supprimer le produit
+    _product.Cameras.Remove(product);
+    
+    // Étape 4 : Enregistrer les changements
+    await _product.SaveChangesAsync();
+
+    return NoContent();
+}
+
 
     private bool ProductExists(int id) {
         return _product.Cameras.Any(e => e.Id == id);
