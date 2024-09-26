@@ -4,6 +4,7 @@ import '../../Styles/Home.css'
 import logo from '../../assets/Main_Logo.png'
 import { useState } from 'react'
 import WindowCommand from './Command_Window'
+import { Maintenance } from '../Maintenance'
 
 const Home = () => {
     const location = useLocation()
@@ -20,7 +21,8 @@ const Home = () => {
     }
 
     return (
-        <div className={`${currentPageClass}-page container`}>
+        <Maintenance />
+       /* <div className={`${currentPageClass}-page container`}>
 
             {window && <WindowCommand onClose={handleCloseWindow} />}
 
@@ -59,7 +61,7 @@ const Home = () => {
                 <i className='bi bi-instagram mx-4 logo'></i>
             </div>
 
-        </div>
+        </div> */
     )
 }
 

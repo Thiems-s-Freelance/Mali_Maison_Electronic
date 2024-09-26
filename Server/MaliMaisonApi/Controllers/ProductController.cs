@@ -45,7 +45,7 @@ public async Task<IActionResult> Add([FromForm] Camera cameraDto, [FromForm] IFo
         return BadRequest("invalid input");
 
     // Traitement du fichier
-    var imagePath = "/remote/path/Server/MaliMaisonApi/wwwroot/images";
+    var imagePath = Path.Combine(_env.WebRootPath, "images");
 
     if (!Directory.Exists(imagePath)) {
         Directory.CreateDirectory(imagePath);
